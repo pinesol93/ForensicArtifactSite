@@ -1,0 +1,518 @@
+<!DOCTYPE html>
+<html lang="en">
+  
+<head>
+      <meta charset="UTF-8">
+  <title>Windows Forensic Artifacts</title>
+  <link rel="stylesheet" href="./style/OS_style.css">
+  
+    <!--Bootstrap CSS CDN-->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm"
+        crossorigin="anonymous" />
+    <!--jQuery CDN-->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous">
+    </script>
+      
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous">
+    </script>
+      
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous">
+    </script>
+</head>
+  
+<body>
+	<div class="swanky_title">
+	<h2>Windows Artifacts</h2>
+	</div>
+
+    <!--Accordion-->
+    <div class="accordion" id="accordionParent">
+        <div class="card">
+            <div class="card-header" id="headingOne">
+                <h2 class="mb-0">
+                    <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#File_Download" aria-expanded="true" aria-controls="File_Download">
+                        File Download
+                    </button>
+                </h2>
+            </div>
+  
+            <div id="File_Download" class="collapse show" aria-labelledby="headingOne" data-parent="#accordionParent">
+                <div class="card-body">
+                    <h4> OpenSave MRU</h4>
+					The Open/Save MRU registry key tracks files that were accessed via the "Open" or "Save as" diaglog box. The "*" subkey contains files that were 
+					recently accessed. Other subkeys, denoted as file extensions, contain recently accessed files per those extensions. 
+					
+						<p>&emsp; Windows XP: <div class="artifact_location">NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\OpenSaveMRU</div></p>
+
+						<p>&emsp; Windows 7/8/10: <div class="artifact_location">NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\OpenSavePIDlMRU</div></p>
+					
+					<h4>Outlook Email Attachments</h4>
+					Outlook attachments are saved in a temporary folder called "OLK" or the Outlook temp folder. The location varies between Outlook version and user. 
+					Refer to this chart, courtesy of <a href="https://www.groovypost.com/howto/microsoft/outlook/find-the-microsoft-outlook-temporary-olk-folder/,">GroovyPost</a> for the location:
+						<p>&emsp; Outlook 97: <div class="artifact_location">HKEY_CURRENT_USER\Software\Microsoft\Office\8.0\Outlook\Security</div></p>
+						<p>&emsp; Outlook 98: <div class="artifact_location">HKEY_CURRENT_USER\Software\Microsoft\Office\8.5\Outlook\Security</div></p>
+						<p>&emsp; Outlook 2000: <div class="artifact_location">HKEY_CURRENT_USER\Software\Microsoft\Office\9.0\Outlook\Security</div></p>
+						<p>&emsp; Outlook 2002/XP: <div class="artifact_location">HKEY_CURRENT_USER\Software\Microsoft\Office\10.0\Outlook\Security</div></p>
+						<p>&emsp; Outlook 2003: <div class="artifact_location">HKEY_CURRENT_USER\Software\Microsoft\Office\11.0\Outlook\Security</div></p>
+						<p>&emsp; Outlook 2007: <div class="artifact_location">HKEY_CURRENT_USER\Software\Microsoft\Office\12.0\Outlook\Security</div></p>
+						<p>&emsp; Outlook 2010: <div class="artifact_location">HKEY_CURRENT_USER\Software\Microsoft\Office\14.0\Outlook\Security</div></p>
+						<p>&emsp; Outlook 2013: <div class="artifact_location">HKEY_CURRENT_USER\Software\Microsoft\Office\15.0\Outlook\Security</div></p>
+						<p>&emsp; Outlook 2016: <div class="artifact_location">HKEY_CURRENT_USER\Software\Microsoft\Office\16.0\Outlook\Security</div></p>
+						<p>&emsp; Outlook 2019 & O365: <div class="artifact_location">HKEY_CURRENT_USER\Software\Microsoft\Office\16.0\Outlook\Security</div></p>
+					
+					<h4>Chat History</h4>
+					Download location and history varies between chat client. Some common clients and locations are below: 
+					
+					 <p>&emsp; Discord: <div class="artifact_location"> %appdata%\discord </div></p>
+					 <p>&emsp; Slack: <div class="artifact_location"> C:\Users\%USERNAME%\Downloads </div></p>
+				
+					
+					
+					<h4>Browser Downloads</h4>
+					The physical download location for each browser can be configured within the browser itself. Logs of what was downloaded are available in the locations below.
+						<p>&emsp; FireFox <div class="artifact_location">C:\Users\%USERNAME%\AppData\Roaming\Mozilla\Firefox\Profiles\[profileID].default\downloads.sqlite</div></p>
+						<p>&emsp; Chome <div class="artifact_location">
+							C:\Users\%USERNAME%\AppData\Local\Google\Chrome\User Data\Default\History <br> 
+							 C:\Users\%USERNAME%\AppData\Local\Google\Chrome\User Data\ChromeDefaultData\History
+						</div></p>
+						<p>&emsp; Edge <div class="artifact_location">C:\Users\%USERNAME%\AppData\Local\Microsoft\Windows\WebCache\WebCacheV01.dat</div></p>
+						
+					
+					<h4>Alternate Data Stream (ADS) Zone.Identifier</h4>
+					Alternate Data Streams are metadata created when a file is downloaded from a specific security "zone". Often shown as <b> sample.txt:Zone.Identifier:$DATA </b> The zones can be found below:
+					<ul>
+					<li>0 – Local Machine Zone, the most trusted zone for content that exists on the local computer</li>
+					<li>1 – Local Intranet Zone, for content located on an organization’s intranet </li>
+					<li>2 – Trusted Sites Zone, for content located on Web sites that are considered more reputable or trustworthy than other sites on the Internet </li>
+					<li>3 – Internet Zone, for Web sites on the Internet that do not belong to another zone </li>
+					<li>4 – Restricted Sites Zone, for Web sites that contain potentially-unsafe content </li>
+					</ul>
+                </div>
+            </div>
+        </div>
+  
+        <div class="card">
+            <div class="card-header" id="headingTwo">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" type="button" data-toggle="collapse" data-target="#Program_Execution" aria-expanded="false" aria-controls="Program_Execution">
+                        Program Execution
+                    </button>
+                </h2>
+            </div>
+  
+            <div id="Program_Execution" class="collapse" aria-labelledby="headingTwo" data-parent="#accordionParent">
+                <div class="card-body">
+                    <h4>Link Files</h4>
+					Link (.lnk) files are used as a symbolic link to files that a user has recently accessed. This is often in the form of double-clicking on a file
+					within Windows Explorer. 
+					
+					<p>&emsp; LNK file location: <div class="artifact_location">C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Windows\Recent</div></p>
+						
+					
+					<h4>Jump Lists</h4>
+					JumpLists are created for ease-of-use in the Windows 10 OS and can be used to identify both program execution and file knowledge. Each file within either 
+					AutomaticDestinations or CustomDestinations is appended with "-ms" and an AppID. Ex. "5f7b3sbl.automaticDesinations-ms" <br> <br>
+					Two folders are created within <span class="artifact_location">C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Windows\Recent:</span> AutomaticDestinations and CustomDestinations.
+					<ul>
+					<li><b>AutomaticDestinations</b> are auto-populated when an application associated with a file is run and stored in a subfolder within the Recent  (see above).</li>
+					<li><b>CustomDestinations</b> are similarly stored in the Recent folder (see above), but are created when a user “pins” a file to the Start Menu or Task Bar.
+					</ul>
+
+					<h4>Prefetch and Superfetch</h4>
+					To improve performance, Prefetch tracks recent run programs and tracks them in <span class="artifact_location">C:\Windows\Prefetch</span>. Each file contains "ExefileName.exe-HASH.pf" where 
+					HASH is a unique ID of the executable. Superfetch (aka Sysmain) takes this one step further and anticipates programs that the user will run. These are then 
+					loaded into memory. <br>
+					
+						<p>&emsp; Prefetch file location: <div class="artifact_location">C:\Windows\Prefetch</div></p>
+
+					<h4>System Resource Usage Monitor (SRUM)</h4>
+					Windows temporarily stores a wealth of information about user activity including the full path to executables, CPU time in the foreground and background, 
+					and the SID responsible for execution within
+					<span class="artifact_location">HKLM\SOFTWARE\Microsoft\Windows NT\CurrenVersion\SRUM\Extensions</span> and writes that data to SRUDB.dat at shutdown. You can expect to find the last 30 days of application data in SRUM.
+					
+					<p>&emsp; SRUM Registry Location: <div class="artifact_location">HKLM\SOFTWARE\Microsoft\Windows NT\CurrenVersion\SRUM\Extensions </div></p>
+					<p>&emsp; SRUM.dat location: <div class="artifact_location">C:\Windows\system32\sru\SRUDB.dat</div></p>
+					
+					<h4>Registry - RecentDocs</h4>
+						The RecentDocs stores several subkeys that can be used to determine what files were accessed by an account. The MRUListEx key shows the order in which files were accessed.
+						<p>&emsp; RecentDocs Registry Key: <div class="artifact_location">HKCU\%User_SID%\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs</div></p>
+						
+					<h4>Registry - TypedPaths</h4>
+						TypedPaths shows items typed into the Windows Explorer bar by the user
+							<p>&emsp; TypesPaths Registry Key: <div class="artifact_location">HKCU\%User_SID%\Software\Microsoft\Windows\CurrentVersion\Explorer\TypedPaths</div></p>
+						
+					<h4>Registry - RunMRU</h4>
+						RunMRU records items typed into the Windows Run dialog by the user
+							<p>&emsp; RunMRU Registry Key: <div class="artifact_location">HKCU\%User_SID%\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU</div></p>
+										
+					<h4>Registry - UserAssist</h4>
+						UserAssist contains ROT-13 encoded names of GUI programs that have been run and the number of times each has run
+							<p>&emsp; UserAssist Registry Key: <div class="artifact_location">HKCU\%User_SID%\Software\Microsoft\Windows\CurrentVersion\Explorer\UserAssist</div></p>
+							
+					<h4>Registry - Shellbags</h4>
+						This registry location (NTUSER.DAT) and UsrClass.dat record whenever a user accesses a folder or zip file. 
+						<p>&emsp; Shellbags Location: <div class="artifact_location">HKCU\SOFTWARE\Microsoft\Windows\Shell</div></p>
+					
+					
+					<h4>Registry - ShimCache / AppCompat</h4>
+					
+					<h4>Registry - MUICache</h4>
+						When a file is executed via Windows Explorer, an entry is made in the MUICache. Windows uses the MUICache to application names
+						retrieved from the PE Version Info of an executable. 
+						<p>&emsp; MUI cache for XP, 2000, 2003: <div class="artifact_location">HKCU\Software\MicrosoftWindows\ShellNoRoam\MUICache</div></p>
+						<p>&emsp; MUI cache for Vista+ <div class="artifact_location">HKCU\Software\Classes\Local Settings\Software\Microsoft\Windows\Shell\MuiCache</div></p>
+				
+					<h4>Windows Error Reporting (WER)</h4>
+						Windows Error Reporting logs an event when a program crashes. Since the program had to be running in order for it to crash
+						WER can be used as an artifact of execution. 
+						
+						<p>&emsp; WER - Windows Event Log Codes: 1001 & 1002</p>
+						<p>&emsp; WER - Report Location: <div class="artifact_location">
+							C:\ProgramData\Microsoft\Windows\WER\ReportArchive <br>
+							C:\ProgramData\Microsoft\Windows\WER\ReportQueue <br>
+							C:\Users\%USERNAME%\AppData\Local\Microsoft\Windows\WER\ReportArchive <br>
+							C:\Users\%USERNAME%\AppData\Local\Microsoft\Windows\WER\ReportQueue
+						</div></p>
+						
+					
+					<h4>Event Tracing for Windows (ETW) and Event Trace Logs (ETL)</h4>
+						ETLs or Event Trace Logs are ETW trace sessions that are written to disk upon shutdown, reboot, a second user logging in, updates, etc. 
+						Originally created for program debugging, these log files vary in their volatility and content, but they can be used to determine program execution among many other things.
+						These logs can contain system configuration information, WiFi SSIDs, process/ thread information, file and disk IO, sleep session 
+						studies, boot and shutdown information, previously deleted files/folders and more. 
+						
+						<p>&emsp;Common ETL Locations:<div class="artifact_location">
+							C:\ProgramData\Microsoft\Windows\Power Efficiency Diagnostics\energy-ntkl.etl<br>
+							C:\ProgramData\Microsoft\Windows\Power Efficiency Diagnostics\energy-trace.etl<br>
+							C:\Windows\System32\WDI\LogFiles\BootCKCL.etl<br>
+							C:\Windows\System32\WDI\LogFiles\ShutdownCKCL.etl<br>
+							C:\Windows\System32\WDI\LogFiles\SecondaryLogonCKCL.etl<br>
+							C:\Users\%USERNAME%\AppData\Local\Microsoft\Windows\Explorer\ExplorerStartupLog.etl<br>
+							C:\Users\%USERNAME%\AppData\Local\Microsoft\Windows\Explorer\ExplorerStartupLog_RunOnce.etl<br>
+							C:\Windows\System32\WDI\<b>GUID</b>\<b>GUID</b><br>
+							C:\Windows\Panther
+						</div></p>
+					
+					<h4>Windows Taskbar</h4>
+						The FeatureUsage and KeyCreationTime registry key and subkeys only exist when an account has logged into a machine
+						interactively; e.g. authintication from a login screen or via RDP. The KeyCreationTime registry key is stored as a 64Bit QWord 
+						in the Windows Filetime format (100-nanosecond intervals that have passed since January 1, 1601 UTC). 
+						
+						Other subkeys and their descriptions include: 
+						<ul>
+							<li>AppBadgeUpdated - the number of times an application has its badge icon updated; e.g. # of new emails</li>
+							<li>AppLaunch - number of times an app pinned to the taskbar was run</li>
+							<li>AppSwitched - number of times an app switched focus; e.g. left-clicked on the taskbar</li>
+							<li>ShowJumpView - number of times an application was right-clicked from the taskbar</li>
+							<li>TrayButtonClicked - number of times a try icon was clicked </li>
+						</ul>
+							Click here for more information: <a href="https://www.crowdstrike.com/blog/how-to-employ-featureusage-for-windows-10-taskbar-forensics/">CrowdStrike Windows Taskbar Forensics</a> 
+					
+					<p>&emsp; FeatureUsage Registry Key Location: <div class="artifact_location">NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\FeatureUsage</div></p>
+					
+					<h4>Background Activity Moderator (BAM)</h4>
+						BAM is available in newer versions of Windows 10 (version 1709+) and provides a full path to an executable that was run, 
+						last execution time/date in Windows Filetime format in UTC. 
+							
+							<p>&emsp;BAM registry location: <div class="artifact_location">HKLM\SYSTEM\CurrentControlSet\Services\bam\UserSettings\{SID}</div></p>
+					
+                </div>
+            </div>
+        </div>
+          
+        <div class="card">
+            <div class="card-header" id="headingThree">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" 
+                        type="button" data-toggle="collapse" data-target="#File_Opening" aria-expanded="false" aria-controls="File_Opening">
+                        File/Folder Opening
+                    </button>
+                </h2>
+            </div>
+  
+            <div id="File_Opening" class="collapse" aria-labelledby="headingThree" data-parent="#accordionParent">
+                  
+                <div class="card-body">
+                   <h4>Link Files</h4>
+					
+					
+					<h4>Jump Lists</h4>
+					JumpLists are created for ease-of-use in the Windows 10 OS and can be used to identify both program execution and file knowledge. Each file within either 
+					AutomaticDestinations or CustomDestinations is appended with "-ms" and an AppID. Ex. "5f7b3sbl.automaticDesinations-ms" <br> <br>
+					Two folders are created within "C:\Users\%USERNAME%\AppData\Roaming\Microsoft\Windows\Recent": AutomaticDestinations and CustomDestinations.
+					<ul>
+					<li><b>AutomaticDestinations</b> are auto-populated when an application associated with a file is run and stored in a subfolder within the Recent  (see above).</li>
+					<li><b>CustomDestinations</b> are similarly stored in the Recent folder (see above), but are created when a user “pins” a file to the Start Menu or Task Bar.
+					</ul>
+					
+					<h4>Registry - RecentDocs</h4>
+						The RecentDocs stores several subkeys that can be used to determine what files were accessed by an account through Windows Explorer. The MRUListEx key shows the order in which files were accessed.
+						<p>&emsp; RecentDocs Registry Key: <div class="artifact_location">HKCU\%User_SID%\Software\Microsoft\Windows\CurrentVersion\Explorer\RecentDocs</div></p>
+											
+					<h4>Registry - TypedPaths</h4>
+						This registry key maintains a list of folders that were searched for via Windows Explorer and then accessed. This feature can be disabled by the user. 
+					
+					<p>&emsp;TypedPath Registry Key: <div class="artifact_location">NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\TypedPath</div></p>
+					
+					<h4>Registry - RunMRU</h4>
+						RunMRU records items typed into the Windows Run dialog by the user
+							<p>&emsp; RunMRU Registry Key: <div class="artifact_location">HKCU\%User_SID%\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU</div></p>
+					
+					<h4>Registry - Shellbags</h4>
+						Specfically, Shellbags hold a user's preferences when browsing folders. Things like changing icon size and layout is remembered
+						by Shellbags. More generally, Shellbags can be used to identify folders that were opened or folders that were enumerated, or 
+						files and folders that were present at the time. 
+						
+						<p>&emsp; NTUSER.DAT: <div class="artifact_location">HKCU\Software\Microsoft\Windows\Shell</div></p>
+						<p>&emsp; USRCLASS.DAT: <div class="artifact_location">HKCU\Software\Classes\Local Settings\Software\Microsoft\Window</div></p>
+					
+					
+					<h4>Microsoft Word Reading Locations</h4>
+						https://thinkdfir.com/2019/02/11/microsoft-office-reading-locations-part-1/
+
+                </div>
+            </div>
+        </div>
+		
+		<div class="card">
+            <div class="card-header" id="headingThree">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" 
+                        type="button" data-toggle="collapse" data-target="#File_Knowledge" aria-expanded="false" aria-controls="File_Knowledge">
+                        File Knowledge
+                    </button>
+                </h2>
+            </div>
+  
+            <div id="File_Knowledge" class="collapse" aria-labelledby="headingFour" data-parent="#accordionParent">
+                  
+                <div class="card-body">
+					<h4>OpenSave MRU</h4>
+					The OpenSave MRU registry key tracks files that were accessed via the "Open" or "Save as" diaglog box. The "*" subkey contains files that were 
+					recently accessed. Other subkeys, denoted as file extensions, contain recently accessed files per those extensions. 
+					
+						<p>&emsp; Windows XP: <div class="artifact_location">NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\OpenSaveMRU</div></p>
+
+						<p>&emsp; Windows 7/8/10: <div class="artifact_location">NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\OpenSavePIDlMRU</div></p>
+					<h4>LastVistedMRU</h4>
+					LastVistedMRU maintains a list of applications that were used to open or save files tracked by OpenSaveMRU. Last visited MRU can be used in conjunction with OpenSaveMRU
+					to get the complete picture of what application was used to open or save a particular file. 
+						
+						<p>&emsp; Windows 7/8/10 location: <div class="artifact_location">NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\ComDlg32\LastVisitedPidlMRU</div></p>
+						
+				
+					<h4>WordWheelQuery</h4>
+                    The WordWheelQuery provides a history of terms that were searched within the Windows Explorer search bar.  
+                    <p>&emsp;WordWheelQuery Registry Key: <div class="artifact_location">NTUSER.DAT\Software\Microsoft\Windows\CurrentVersion\Explorer\WordWheelQuery</div></p>
+
+					
+					<h4>Thumbscache</h4>
+						Contains a thumbnail cache of images that a user has viewed in thumbnail mode. Click <a href="https://www.forensafe.com/blogs/thumbcache.html">here</a> for more info.
+						<ul>
+							<li><b>Cache Record ID</b> - The cached record identifier. </li>
+							<li><b>Data Type</b> - The file type of the data. </li>
+							<li><b>Data Offset</b> - The offset of the data within the record. </li>
+							<li><b>Data Size</b> - The size of the data in the record. </li>
+							<li><b>Data Checksum</b> - The checksum of the record data. </li>
+							<li><b>Header Checksum</b> - The checksum of the record header. </li>
+							<li><b>Cache Entry Offset</b> - The offset of the record within the cache file. </li>
+							<li><b>Cache Entry Size</b> - The record size. </li>
+							<li><b>Cache Entry Hash</b> - The hash value of the record. </li>
+							<li><b>System Type</b> - The Windows operating system type. </li>
+							<li><b>Location</b>- The location of the source cache file.</li> 
+						</ul>
+
+						<p>&emsp;Thumbscache location: <div class="artifact_location">C:\Users\%username%\AppData\Local\Microsoft\Windows\Explorer</div></p>
+						
+					
+					
+					<h4>Recycle Bin</h4>
+						Items that are put in the Recyclebin on the Windows desktop are retained and available for forensic analysis. There will be two 
+						file entires for one recycled fine. The items that start with $I contain: the original filename, path, file size, and when the file was deleted. 
+						The items that start with $R contains the file itself. 
+						
+						<p>&emsp; Metadata about recycled file: <div class="artifact_location">C:\$Recycle.Bin\SID\$Ixxxxxx</div></p>
+						<p>&emsp; Recycled file: <div class="artifact_location">C:\$Recycle.Bin\SID\$Rxxxxxx</div></p>
+						
+						<b>Note: </b> to correlate an SID to a username, use the following registry location: 
+						<div class="artifact_location">HKLM:\Software\Microsoft\Windows NT\CurrentVersion\ProfileList</div>
+						<br>
+					
+					<h4>Registry - RunMRU</h4>
+						RunMRU records items typed into the Windows Run dialog by the user
+							<p>&emsp; RunMRU Registry Key: <div class="artifact_location">HKCU:\%User_SID%\Software\Microsoft\Windows\CurrentVersion\Explorer\RunMRU</div></p>
+					
+                </div>
+            </div>
+        </div>
+		
+		<div class="card">
+            <div class="card-header" id="headingThree">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" 
+                        type="button" data-toggle="collapse" data-target="#Location" aria-expanded="false" aria-controls="Location">
+                        Location
+                    </button>
+                </h2>
+            </div>
+  
+            <div id="Location" class="collapse" aria-labelledby="headingFive" data-parent="#accordionParent">
+                  
+                <div class="card-body">
+					<h4>Timezone</h4>
+                    Determining the timezone of the suspect image is critical in timeline or understanding the timestamps of forensic artifacts. To
+					determine the timezone of a machine, you first have to determine the CurrentControlSet that the machine is using. 
+					To find that, review this registry key: <span class="artifact_location">HKEY_LOCAL_MACHINE\System\Select</span> and look for the 
+					value in the "Current" key. If the value is <span class="artifact_location">"0x01"</span> then the machine is using CurrentControlSet1. If the value is <span class="artifact_location">"0x02"</span> then the machine
+					is using CurrentControlSet2. 
+					Once we know the CurrentControlSet, we can navigate to <span class="artifact_location">HKEY_LOCAL_MACHINE\ControlSet00X\Control\TimeZoneInformation</span> in the registry and look for the 
+					"TimeZoneKeyName". Its value will tell you what timezone of the machine. There are multiple other keys within this subkey. Descriptions of each
+					can be found <a href="https://docs.microsoft.com/en-us/windows/win32/sysinfo/structure-of-the-registry">here</a> and defined by <a href="https://docs.microsoft.com/en-us/windows/win32/api/timezoneapi/ns-timezoneapi-time_zone_information">Microsoft</a>. 
+					Some examples are below. 
+						<ul>
+							<li><b>Bias</b> - The bias is the difference, in minutes, between Coordinated Universal Time (UTC) and local time (UTC = local time + bias) </li>
+							<li><b>StandardBias</b> - The bias value to be used during local time translations that occur during standard time. </li>
+							<li><b>ActiveTimeBias</b> - This value is the current time difference from UTC in minutes, regardless of whether daylight saving is in effect or not.  
+							It is this value that helps establish the current time zone settings</li>
+						</ul>
+					
+					<h4>Network History</h4>
+					Windows maintains a list of previously connected WiFi networks within the registry. Each SSID has its own GUID under the "Profiles" subkey. 
+					<p>&emsp;Previously Connected Networks: <div class="artifact_location">HKEY_LOCAL_MACHINE\SOFTWARE\Microsoft\Windows NT\CurrentVersion\NetworkList\Profiles\</div></p>
+					
+					
+                </div>
+            </div>
+        </div>
+		
+		<div class="card">
+            <div class="card-header" id="headingThree">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" 
+                        type="button" data-toggle="collapse" data-target="#External_Device" aria-expanded="false" aria-controls="External_Device">
+                        External Device Usage
+                    </button>
+                </h2>
+            </div>
+  
+            <div id="External_Device" class="collapse" aria-labelledby="headingSix" data-parent="#accordionParent">
+                  
+                <div class="card-body">
+					<h4>List of all USB Devices Plugged in</h4>
+                    The USBSTOR subkey keeps track of all USB devices that are plugged into a Windows computer. The following
+					are items that can be gleamed from this subkey:
+					
+					<ul>
+							<li><b>USB device name</b></li>
+							<li><b>Vendor/Manufactorer name</b> </li>
+							<li><b>Device Serial Number</b> Note: if the second character is an '&' then the device does not have a serial</li>
+						</ul>
+					
+					<h4>Drive and Volume Serial Number</h4>
+					MountedDevices subkey stores the database of mounted devices for the NTFS file system. 
+					This database matches the serial number of a USB device to a given drive letter or volume that was mounted 
+					when the USB device was inserted. 
+					
+						<p>MountedDevices subkey: <div class="artifact_location">HKEY_LOCAL_MACHINE\SYSTEM\MOUNTEDDEVICES</div></p>
+					
+					<h4>Device Key Information</h4>
+						<!--https://forensicswiki.xyz/wiki/index.php?title=USB_History_Viewing -->
+                
+					<h4>Shortcut / LNK Files</h4>
+					
+					<h4>Plug-n-Play (PnP) / Universal Plug-n-play (UPnP)</h4>
+					
+					<h4>Windows Event codes</h4>
+					<!--https://forensixchange.com/posts/19_08_03_usb_storage_forensics_1/ https://forensicswiki.xyz/wiki/index.php?title=USB_History_Viewing -->
+                </div>
+            </div>
+        </div>
+		
+		<div class="card">
+            <div class="card-header" id="headingThree">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" 
+                        type="button" data-toggle="collapse" data-target="#user_accounts" aria-expanded="false" aria-controls="user_accounts">
+                        User/Accounts
+                    </button>
+                </h2>
+            </div>
+  
+            <div id="user_accounts" class="collapse" aria-labelledby="headingSeven" data-parent="#accordionParent">
+                  
+                <div class="card-body">
+					<h4>Event Codes</h4>
+                    Bootstrap is a free and open-source tool
+                    collection for creating responsive websites
+                    and web applications. It is the most popular
+                    HTML, CSS, and JavaScript framework for 
+                    developing responsive, mobile-first web sites.
+                    Nowadays, the websites are perfect for all 
+                    the browsers (IE, Firefox and Chrome) and 
+                    for all sizes of screens (Desktop, Tablets,
+                    Phablets, and Phones). All thanks to Bootstrap
+                    developers – Mark Otto and Jacob Thornton of 
+                    Twitter, though it was later declared to be 
+                    an open-source project.
+				<h4>Last Login</h4>
+				
+				<h4> Password Change</h4>
+                </div>
+            </div>
+        </div>
+		
+		<div class="card">
+            <div class="card-header" id="headingThree">
+                <h2 class="mb-0">
+                    <button class="btn btn-link collapsed" 
+                        type="button" data-toggle="collapse" data-target="#Browser" aria-expanded="false" aria-controls="Browser">
+                        Browser
+                    </button>
+                </h2>
+            </div>
+  
+            <div id="Browser" class="collapse" aria-labelledby="headingEight" data-parent="#accordionParent">
+                  
+                <div class="card-body">
+				<h4>History</h4>
+                    Bootstrap is a free and open-source tool
+                    collection for creating responsive websites
+                    and web applications. It is the most popular
+                    HTML, CSS, and JavaScript framework for 
+                    developing responsive, mobile-first web sites.
+                    Nowadays, the websites are perfect for all 
+                    the browsers (IE, Firefox and Chrome) and 
+                    for all sizes of screens (Desktop, Tablets,
+                    Phablets, and Phones). All thanks to Bootstrap
+                    developers – Mark Otto and Jacob Thornton of 
+                    Twitter, though it was later declared to be 
+                    an open-source project.
+				<h4>Cache</h4>
+				
+				<h4>Typed URLs</h4>
+				
+				<h4>Cookies</h4>
+				
+				<h4>Favorites</h4>
+				
+				<!--https://www.digitalforensics.com/blog/an-overview-of-web-browser-forensics/ -->
+                </div>
+            </div>
+        </div>
+    </div>
+  
+    <script>
+        if (location.hash !== null && location.hash !== "") {
+            $(location.hash + ".collapse").collapse("show");
+        }
+    </script>
+</body>
+  
+</html>
